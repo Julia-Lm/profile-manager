@@ -1,12 +1,13 @@
 import { PageLayout } from "widgets/page-layout";
 import { ManagerTable } from "pages/profile-manager/ui";
 import { useProfiles } from "shared/hooks/useProfiles.ts";
-import { Box, Button, Typography, Snackbar, Alert } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { Modal } from "shared/ui-kit";
 import { useState } from "react";
 import { ProfileForm } from "features/index";
 import { ProfileFormType } from "app/store/profile-store.types.ts";
 import { nanoid } from "nanoid";
+import { SnackbarMessage } from "entities/index";
 
 export const ProfileManager = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -53,16 +54,12 @@ export const ProfileManager = () => {
         deleteProfileMutation={deleteProfileMutation}
         updateProfileMutation={updateProfileMutation}
       />
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      <SnackbarMessage
         open={Boolean(errorMessage)}
-        autoHideDuration={6000}
+        severity="error"
+        message={errorMessage}
         onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" variant="filled" sx={{ width: "100%" }}>
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+      />
     </PageLayout>
   );
 };
