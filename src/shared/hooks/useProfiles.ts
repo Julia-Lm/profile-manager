@@ -21,8 +21,8 @@ export const useProfiles = () => {
   }, [error]);
 
   const addProfileMutation = useMutation<Profile, Error, Profile>(addProfileAPI, {
-    onSuccess: (newProfile) => {
-      addProfile(newProfile);
+    onSuccess: (newProfile, variables) => {
+      addProfile({ ...newProfile, id: variables.id });
       queryClient.invalidateQueries(queryKey);
     },
     onError: (error) => {

@@ -27,9 +27,6 @@ export const ProfileForm = ({ onSubmit, initialData, onCancel, disabled }: Profi
   };
 
   const onCreateProfile = async (formData: ProfileFormType) => {
-    // const isEqualValues = isEqual(formData, initialData);
-    //
-    // if (!isEqualValues) await onSubmit(formData);
     await onSubmit(formData);
     onClose();
   };

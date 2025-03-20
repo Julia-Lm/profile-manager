@@ -6,8 +6,10 @@ import { Modal } from "shared/ui-kit";
 import { useState } from "react";
 import { ProfileForm } from "features/index";
 import { ProfileFormType } from "app/store/profile-store.types.ts";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
 import { SnackbarMessage } from "entities/index";
+
+const generateNumericId = customAlphabet("0123456789", 4);
 
 export const ProfileManager = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -25,7 +27,7 @@ export const ProfileManager = () => {
   const closeModalForm = () => setOpenModal(false);
 
   const onCreateProfile = async (formData: ProfileFormType) => {
-    const randomId = nanoid();
+    const randomId = generateNumericId();
     addProfileMutation.mutate({ ...formData, id: randomId });
   };
 
