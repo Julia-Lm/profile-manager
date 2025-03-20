@@ -9,7 +9,7 @@ import { ProfileFormType } from "app/store/profile-store.types.ts";
 import { customAlphabet } from "nanoid";
 import { SnackbarMessage } from "entities/index";
 
-const generateNumericId = customAlphabet("0123456789", 4);
+const generateNumericId = customAlphabet("0123456789", 3);
 
 export const ProfileManager = () => {
   const [openModal, setOpenModal] = useState(false);

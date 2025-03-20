@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { Profile, ProfileState } from "app/store/profile-store.types.ts";
 import { storageName } from "../../config.ts";
 
@@ -22,6 +22,7 @@ export const useProfileStore = create<ProfileState>()(
     }),
     {
       name: storageName,
+      storage: createJSONStorage(() => localStorage),
     },
   ),
 );

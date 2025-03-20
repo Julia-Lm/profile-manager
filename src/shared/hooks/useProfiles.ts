@@ -13,7 +13,7 @@ export const useProfiles = () => {
   const { data, isLoading, error } = useQuery<Profile[]>(queryKey, fetchProfiles);
 
   useEffect(() => {
-    if (data) setProfiles(data);
+    if (data && !profiles.length) setProfiles(data);
   }, [data]);
 
   useEffect(() => {
