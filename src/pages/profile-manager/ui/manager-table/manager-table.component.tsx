@@ -1,23 +1,12 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-  Box,
-} from "@mui/material";
+import { Button, Box } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ManagerTableProp } from "./manager-table.type.ts";
-import { Loader } from "entities/index";
 import { Modal } from "shared/ui-kit";
 import { useState, useMemo } from "react";
 import { ProfileForm } from "features/profile-form";
 import { ProfileFormType } from "app/store/profile-store.types.ts";
-import { tableCell } from "./manager-table.constants.tsx";
 import { getProfileTableData } from "pages/profile-manager/ui/manager-table/utils.ts";
 
 export const ManagerTable = ({
@@ -53,60 +42,58 @@ export const ManagerTable = ({
 
   const tableData = getProfileTableData(profiles);
 
+  const baseColumnsSettings: Pick<GridColDef, "filterable" | "sortable" | "editable" | "disableColumnMenu" | "resizable"> = {
+    filterable: false, sortable: false, editable: false, disableColumnMenu: true, resizable: false
+  }
+
+  const tableColumns: GridColDef[] = [
+    { field: "id", headerName: "ID", ...baseColumnsSettings },
+    { field: "name", headerName: "Name", ...baseColumnsSettings },
+    { field: "username", headerName: "Username", ...baseColumnsSettings },
+    { field: "email", headerName: "Email", width: 220, ...baseColumnsSettings },
+    { field: "phone", headerName: "Phone", width: 150, ...baseColumnsSettings },
+    { field: "address", headerName: "Address", width: 170, ...baseColumnsSettings },
+    { field: "company", headerName: "Company", width: 150, ...baseColumnsSettings },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 160,
+      ...baseColumnsSettings,
+      headerAlign: "center",
+      type: "actions",
+      renderCell: ({ id }) => (
+        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px", height: "100%" }}>
+          <Button variant="text" color="secondary" onClick={handleEdit(id)}>
+            <EditIcon />
+          </Button>
+          <Button
+            variant="text"
+            color="error"
+            onClick={handleDelete(id)}
+            disabled={deleteProfileMutation.isLoading && id === selectProfileID}
+          >
+            <DeleteIcon />
+          </Button>
+        </Box>
+      ),
+    },
+  ];
+
   return (
     <>
-      <TableContainer component={Paper} sx={{ position: "relative" }}>
-        {isLoading && <Loader />}
-        <Table>
-          <TableHead>
-            <TableRow>
-              {tableCell.map(({ label, sx }) => (
-                <TableCell key={label} sx={sx}>
-                  {label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableData.length ? (
-              <>
-                {tableData.map(({ id, name, username, email, phone, address, company }) => (
-                  <TableRow key={id}>
-                    <TableCell>{id}</TableCell>
-                    <TableCell>{name}</TableCell>
-                    <TableCell>{username}</TableCell>
-                    <TableCell>{email}</TableCell>
-                    <TableCell>{phone}</TableCell>
-                    <TableCell>{address}</TableCell>
-                    <TableCell>{company}</TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
-                        <Button variant="text" color="secondary" onClick={handleEdit(id)}>
-                          <EditIcon />
-                        </Button>
-                        <Button
-                          variant="text"
-                          color="error"
-                          onClick={handleDelete(id)}
-                          disabled={deleteProfileMutation.isLoading && id === selectProfileID}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </>
-            ) : (
-              <TableRow>
-                <TableCell colSpan={tableCell.length} style={{ textAlign: "center", minHeight: "53px" }}>
-                  No data
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <DataGrid
+        rows={tableData}
+        columns={tableColumns}
+        loading={isLoading}
+        pageSizeOptions={[10]}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
+            },
+          },
+        }}
+      />
       <Modal open={openModal} onClose={closeModalForm} title="Edit Profile">
         <ProfileForm
           onSubmit={onUpdatedProfile}
